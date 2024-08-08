@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         self.image_dict = {}
         self.shown_images = {}
 
-        # load toolbar and images
+        # load toolbar and data
         for cmd in self.toolbar_cmds:
             new_button = MyQAction(cmd, self)
             new_button.setCheckable(False)

@@ -7,7 +7,7 @@ from PySide2.QtWidgets import (
     QToolButton, QHBoxLayout, QGridLayout, QDialog
 )
 from PySide2.QtGui import (
-    QPixmap
+    QPixmap, QMovie
 )
 
 class CatWindow(QMainWindow):
@@ -23,15 +23,20 @@ class CatWindow(QMainWindow):
         toolbar.setFixedSize(QSize(1980, 30))
         toolbar.setMovable(False)
         toolbar.setFloatable(False)
-        self.toolbar_cmds = ("toggle", "wot", "poop", "stinky")
+
+        self.toolbar_cmds = ("toggle", "wot", "poop", "stinky", "vibingcat")
         self.toolbar_buttons = {}
 
-        image_layout = QHBoxLayout()
+        widget_layout = QHBoxLayout()
+        file_formats = (None, "png", "png", "png", "gif")
+        image_formats = ("png")
+        animated_formats = ("gif")
         self.image_dict = {}
         self.shown_images = {}
 
-        # load toolbar and images
-        for cmd in self.toolbar_cmds:
+        # load toolbar and data
+        for file_format, cmd in zip(file_formats, self.toolbar_cmds):
+            print(file_format, cmd)
             new_button = QToolButton()
             new_button.setText(cmd)
             new_button.setCheckable(False)
@@ -43,19 +48,21 @@ class CatWindow(QMainWindow):
                 new_button.setCheckable(True)
                 new_button.toggled.connect(self.toggle_toggle)
             else:
-                new_button.installEventFilter(self)
+                label = QLabel()
+                if file_format in image_formats:
+                    # load image into QLabel
+                    image = QPixmap()
+                    image.load(f"./data/{cmd}.{file_format}")
+                    label.setPixmap(image)
+                else:
+                    print("loading animation!")
+                    animation = QMovie(f"./data/{cmd}.{file_format}")
+                    animation.start()
+                    label.setMovie(animation)
 
-                # load image into QLabel
-                image = QPixmap()
-                image.load(f"./images/{cmd}.png")
-
-                image_label = QLabel()
-                image_label.setPixmap(image)
-                image_label.hide()
-
-                image_layout.addWidget(image_label)
-                self.image_dict[cmd] = image_label
-
+                label.hide()
+                widget_layout.addWidget(label)
+                self.image_dict[cmd] = label
 
                 # map buttons to signals
                 new_button.pressed.connect(partial(self.button_down, cmd))
@@ -65,7 +72,7 @@ class CatWindow(QMainWindow):
 
         self.addToolBar(toolbar)
         image_widget = QWidget()
-        image_widget.setLayout(image_layout)
+        image_widget.setLayout(widget_layout)
         self.setCentralWidget(image_widget)
 
     @property
