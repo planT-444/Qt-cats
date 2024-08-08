@@ -1,8 +1,8 @@
 import sys
-from MainWindow import MainWindow
+from CatWindow import CatWindow
 from PySide2.QtWidgets import QApplication
 
 app = QApplication(sys.argv)
-window = MainWindow()
+window = CatWindow()
 window.show()
 app.exec_()

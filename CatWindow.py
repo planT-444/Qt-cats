@@ -3,13 +3,14 @@ from PySide2.QtCore import (
     QRect, QSize
 )
 from PySide2.QtWidgets import (
-    QMainWindow, QWidget, QLabel, QToolBar, QPushButton, QToolButton, QHBoxLayout, QGridLayout, QSizePolicy
+    QMainWindow, QWidget, QLabel, QToolBar, QPushButton,
+    QToolButton, QHBoxLayout, QGridLayout, QDialog
 )
 from PySide2.QtGui import (
     QPixmap
 )
 
-class MainWindow(QMainWindow):
+class CatWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -72,8 +73,15 @@ class MainWindow(QMainWindow):
         return self.toolbar_buttons["toggle"].isChecked()
 
     def toggle_toggle(self, checked):
+        print("toggling", checked)
         for cmd in self.toolbar_cmds[1:]:
-            self.toolbar_buttons[cmd].setCheckable(checked)
+            button = self.toolbar_buttons[cmd]
+            button.setChecked(False)
+            button.setCheckable(checked)
+            if not checked:
+                self.image_dict[cmd].hide()
+
+
 
     def button_down(self, cmd):
         if not self.toggle:
